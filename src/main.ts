@@ -27,11 +27,11 @@ export class AppComponent implements AfterViewInit {
   };
 
   ngAfterViewInit() {
-    // const patternCanvas = this.getHorizontalHatchPattern();
-    // const patternCanvas = this.getVerticalHatchPattern();
-    // const patternCanvas = this.getDiagonalHatchPatternUpd();
-    // const patternCanvas = this.getCrossHatchPattern();
-    // const patternCanvas = this.getGravelPattern();
+    // const patternCanvas = getHorizontalHatchPattern();
+    // const patternCanvas = getVerticalHatchPattern();
+    // const patternCanvas = getDiagonalHatchPatternUpd();
+    // const patternCanvas = getCrossHatchPattern();
+    // const patternCanvas = getGravelPattern();
     const patternCanvas = getHoneycombsPattern();
 
     const canvasA = this.canvasA.nativeElement;
@@ -44,6 +44,8 @@ export class AppComponent implements AfterViewInit {
       'repeat'
     ) as CanvasPattern;
     ctxA.fillRect(0, 0, 300, 300);
+
+    ctxA.setTransform(1, 0, 0, 1, 0, 0);
 
     // const canvasB = this.canvasB.nativeElement;
     // canvasB.width = 300;

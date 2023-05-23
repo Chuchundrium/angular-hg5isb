@@ -211,40 +211,57 @@ export function getGravelPattern(
 }
 
 export function getHoneycombsPattern(
-  lineWidth = 2,
+  lineWidth = 20,
+  sideLength = 50,
   backgroundColor = '#F2B6A050',
   lineColor = '#850000'
 ) {
-  const a = 40;
-
   const z = Math.cos(30 * (Math.PI / 180));
-  const patternWidth = 3 * a;
-  const patternHeight = 2 * a * z;
+  const patternWidth = 3 * sideLength + (lineWidth / 2) * z;
+  const patternHeight = 2 * sideLength * z;
 
   const patternCanvas = document.createElement('canvas');
   const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
 
   patternCanvas.width = patternWidth;
   patternCanvas.height = patternHeight;
+
   patternCtx.fillStyle = backgroundColor;
   patternCtx.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
 
   patternCtx.lineWidth = lineWidth;
   patternCtx.strokeStyle = lineColor;
+  patternCtx.lineCap = 'square';
+
+  // patternCtx.setLineDash([2, 8]);
+
+  const da = sideLength / 2;
+
+  const hexagonCoords = [
+    [0.5 * sideLength + da, 2 * sideLength * z],
+    [da, sideLength * z],
+    [0.5 * sideLength + da, 0],
+    [1.5 * sideLength + da, 0],
+    [2 * sideLength + da, sideLength * z],
+    [1.5 * sideLength + da, 2 * sideLength * z],
+  ];
 
   patternCtx.beginPath();
-  patternCtx.moveTo(0, a * z);
-  patternCtx.lineTo(a, a * z);
-  patternCtx.moveTo(a / 2 + a, 2 * a * z);
-  patternCtx.lineTo(0 + a, a * z);
-  patternCtx.lineTo(a / 2 + a, 0);
-  patternCtx.lineTo((3 * a) / 2 + a, 0);
-  patternCtx.lineTo(2 * a + a, a * z);
-  patternCtx.lineTo((3 * a) / 2 + a, 2 * a * z);
-  patternCtx.lineTo(a / 2 + a, 2 * a * z);
-  // patternCtx.moveTo(3 * a, a * z);
-  // patternCtx.lineTo(3 * a + a, a * z);
-  patternCtx.rotate(30 * (Math.PI / 180));
+
+  patternCtx.moveTo(hexagonCoords[1][0] - da, hexagonCoords[1][1]);
+  patternCtx.lineTo(hexagonCoords[1][0], hexagonCoords[1][1]);
+
+  hexagonCoords.forEach((coord, i) => {
+    if (i === 0) {
+      patternCtx.moveTo(coord[0], coord[1]);
+    } else {
+      patternCtx.lineTo(coord[0], coord[1]);
+    }
+  });
+  patternCtx.lineTo(hexagonCoords[0][0], hexagonCoords[0][1]);
+
+  patternCtx.moveTo(hexagonCoords[4][0], hexagonCoords[4][1]);
+  patternCtx.lineTo(hexagonCoords[4][0] + da, hexagonCoords[4][1]);
   patternCtx.stroke();
 
   return patternCanvas;
