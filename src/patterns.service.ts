@@ -1,3 +1,5 @@
+import { CUSTOM_PATTERNS_MAPPING } from './custom-patterns';
+
 export function getHorizontalHatchPattern(
   lineWidth = 4,
   offset = 20,
@@ -263,6 +265,34 @@ export function getHoneycombsPattern(
   patternCtx.moveTo(hexagonCoords[4][0], hexagonCoords[4][1]);
   patternCtx.lineTo(hexagonCoords[4][0] + da, hexagonCoords[4][1]);
   patternCtx.stroke();
+
+  return patternCanvas;
+}
+
+export function getCustomPattern(
+  lineWidth = 2,
+  backgroundColor = '#F2B6A050',
+  lineColor = '#850000'
+) {
+  const patternCanvas = document.createElement('canvas');
+  const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
+
+  patternCanvas.width = 109;
+  patternCanvas.height = 109;
+
+  patternCtx.fillStyle = backgroundColor;
+  patternCtx.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
+
+  patternCtx.lineWidth = lineWidth;
+  patternCtx.strokeStyle = lineColor;
+
+  const img = new Image();
+  // img.src = 'assets/tile.svg';
+
+  img.src =
+    'data:image/svg+xml; charset=utf8,' + CUSTOM_PATTERNS_MAPPING['GRAVEL']();
+
+  patternCtx.drawImage(img, 0, 0);
 
   return patternCanvas;
 }

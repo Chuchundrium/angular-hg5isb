@@ -1,7 +1,7 @@
 import 'zone.js/dist/zone';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { getHoneycombsPattern } from './patterns.service';
+import { getCustomPattern, getHoneycombsPattern } from './patterns.service';
 
 @Component({
   selector: 'my-app',
@@ -32,7 +32,8 @@ export class AppComponent implements AfterViewInit {
     // const patternCanvas = getDiagonalHatchPatternUpd();
     // const patternCanvas = getCrossHatchPattern();
     // const patternCanvas = getGravelPattern();
-    const patternCanvas = getHoneycombsPattern();
+    // const patternCanvas = getHoneycombsPattern();
+    const patternCanvas = getCustomPattern();
 
     const canvasA = this.canvasA.nativeElement;
     canvasA.width = 300;
@@ -58,6 +59,7 @@ export class AppComponent implements AfterViewInit {
     // ) as CanvasPattern;
     // ctxB.fillRect(0, 0, 300, 300);
   }
+
 }
 
 bootstrapApplication(AppComponent);
