@@ -1,7 +1,12 @@
 import 'zone.js/dist/zone';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { getCustomPattern, getHoneycombsPattern } from './patterns.service';
+import {
+  getCustomPattern,
+  getHoneycombsPattern,
+  getHorizontalHatchPattern,
+setCustomPattern,
+} from './patterns.service';
 
 @Component({
   selector: 'my-app',
@@ -33,20 +38,20 @@ export class AppComponent implements AfterViewInit {
     // const patternCanvas = getCrossHatchPattern();
     // const patternCanvas = getGravelPattern();
     // const patternCanvas = getHoneycombsPattern();
-    const patternCanvas = getCustomPattern();
+    // const patternCanvas = getCustomPattern();
 
     const canvasA = this.canvasA.nativeElement;
     canvasA.width = 300;
     canvasA.height = 300;
     const ctxA = canvasA.getContext('2d') as CanvasRenderingContext2D;
 
-    ctxA.fillStyle = ctxA.createPattern(
-      patternCanvas,
-      'repeat'
-    ) as CanvasPattern;
-    ctxA.fillRect(0, 0, 300, 300);
-
-    ctxA.setTransform(1, 0, 0, 1, 0, 0);
+    setCustomPattern(ctxA);
+  
+    // ctxA.fillStyle = ctxA.createPattern(
+    //   patternCanvas,
+    //   'repeat'
+    // ) as CanvasPattern;
+    // ctxA.fillRect(0, 0, 300, 300);
 
     // const canvasB = this.canvasB.nativeElement;
     // canvasB.width = 300;
@@ -59,7 +64,6 @@ export class AppComponent implements AfterViewInit {
     // ) as CanvasPattern;
     // ctxB.fillRect(0, 0, 300, 300);
   }
-
 }
 
 bootstrapApplication(AppComponent);

@@ -4,9 +4,13 @@ export function getHorizontalHatchPattern(
   lineWidth = 4,
   offset = 20,
   backgroundColor = '#FEFF8630',
-  lineColor = '#146C94'
+  lineColor = '#146C94',
+  dashStyle = [7, 5, 2, 5, 2, 5]
 ) {
-  const defailtPatternWidth = 30;
+  const defailtPatternWidth =
+    dashStyle.length > 0
+      ? dashStyle.reduce((partialSum, a) => partialSum + a, 0)
+      : 30;
 
   const patternCanvas = document.createElement('canvas');
   const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -18,6 +22,8 @@ export function getHorizontalHatchPattern(
 
   patternCtx.strokeStyle = lineColor;
   patternCtx.lineWidth = lineWidth;
+
+  patternCtx.setLineDash(dashStyle);
 
   patternCtx.moveTo(0, 0);
   patternCtx.lineTo(defailtPatternWidth, 0);
@@ -277,22 +283,49 @@ export function getCustomPattern(
   const patternCanvas = document.createElement('canvas');
   const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-  patternCanvas.width = 109;
-  patternCanvas.height = 109;
-
-  patternCtx.fillStyle = backgroundColor;
-  patternCtx.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
-
-  patternCtx.lineWidth = lineWidth;
-  patternCtx.strokeStyle = lineColor;
-
   const img = new Image();
   // img.src = 'assets/tile.svg';
 
   img.src =
     'data:image/svg+xml; charset=utf8,' + CUSTOM_PATTERNS_MAPPING['GRAVEL']();
 
-  patternCtx.drawImage(img, 0, 0);
+  img.onload = () => {
+    patternCanvas.width = img.width;
+    patternCanvas.height = img.height;
+    patternCtx.fillStyle = backgroundColor;
+    patternCtx.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
+    patternCtx.lineWidth = lineWidth;
+    patternCtx.strokeStyle = lineColor;
+    patternCtx.drawImage(img, 0, 0);
+  };
 
   return patternCanvas;
+}
+
+export function setCustomPattern(
+  ctx: CanvasRenderingContext2D,
+  lineWidth = 2,
+  backgroundColor = '#F2B6A050',
+  lineColor = '#850000'
+) {
+  const patternCanvas = document.createElement('canvas');
+  const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
+
+  const img = new Image();
+  // img.src = 'assets/tile.svg';
+
+  img.src =
+    'data:image/svg+xml; charset=utf8,' +
+    CUSTOM_PATTERNS_MAPPING['GRAVEL']('rgba(30, 70, 200)', lineWidth);
+
+  img.onload = () => {
+    patternCanvas.width = img.width;
+    patternCanvas.height = img.height;
+    patternCtx.fillStyle = backgroundColor;
+    patternCtx.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
+    patternCtx.drawImage(img, 0, 0);
+
+    ctx.fillStyle = ctx.createPattern(patternCanvas, 'repeat') as CanvasPattern;
+    ctx.fillRect(0, 0, 300, 300);
+  };
 }
