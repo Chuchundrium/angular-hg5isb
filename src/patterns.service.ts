@@ -1,4 +1,4 @@
-import { CUSTOM_PATTERNS_MAPPING } from './custom-patterns';
+import { CUSTOM_PATTERNS_MAPPING, drawGravelPattern } from './custom-patterns';
 
 export function getHorizontalHatchPattern(
   lineWidth = 4,
@@ -103,6 +103,60 @@ export function getDiagonalHatchPattern(
     patternCtx.moveTo(x1, y(x1, c));
     patternCtx.lineTo(x2, y(x2, c));
   });
+
+  patternCtx.stroke();
+  return patternCanvas;
+}
+
+export function getCrossHatchPattern2(
+  width = 300,
+  height = 300,
+  lineWidth = 8,
+  offset = 20,
+  backgroundColor = '#E8F6EF07',
+  lineColor1 = '#4C4C6D',
+  lineAngle1 = 45,
+  lineColor2 = '#1B9C85',
+  lineAngle2 = -45
+) {
+  const defaultWidth = 50;
+  const lineAngleRad1 = lineAngle1 * (Math.PI / 180);
+
+  // y = kx + b
+  const k1 = Math.tan(lineAngleRad1);
+  const b1 = (offset + lineWidth) / Math.cos(lineAngleRad1);
+  const y = (x: number, c: number, k: number, b: number) => k * x + b * c;
+
+  const patternCanvas = document.createElement('canvas');
+  const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
+
+  patternCanvas.width = width;
+  patternCanvas.height = height;
+  patternCtx.fillStyle = backgroundColor;
+  patternCtx.fillRect(
+    patternCanvas.width,
+    patternCanvas.height,
+    patternCanvas.width,
+    patternCanvas.height
+  );
+
+  patternCtx.strokeStyle = lineColor1;
+  patternCtx.lineWidth = lineWidth;
+  patternCtx.lineCap = 'square';
+
+  patternCtx.beginPath();
+
+  const count = Math.round(width / b1);
+  const startI = lineAngle1 > 0 ? -1 * count : 0;
+  const endI = lineAngle1 > 0 ? count : count * 2;
+
+  for (let i = startI; i < endI; i++) {
+    console.log(i);
+    const x1 = -10;
+    const x2 = width + 10;
+    patternCtx.moveTo(x1, y(x1, i, k1, b1));
+    patternCtx.lineTo(x2, y(x2, i, k1, b1));
+  }
 
   patternCtx.stroke();
   return patternCanvas;
@@ -275,33 +329,6 @@ export function getHoneycombsPattern(
   return patternCanvas;
 }
 
-export function getCustomPattern(
-  lineWidth = 2,
-  backgroundColor = '#F2B6A050',
-  lineColor = '#850000'
-) {
-  const patternCanvas = document.createElement('canvas');
-  const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
-
-  const img = new Image();
-  // img.src = 'assets/tile.svg';
-
-  img.src =
-    'data:image/svg+xml; charset=utf8,' + CUSTOM_PATTERNS_MAPPING['GRAVEL']();
-
-  img.onload = () => {
-    patternCanvas.width = img.width;
-    patternCanvas.height = img.height;
-    patternCtx.fillStyle = backgroundColor;
-    patternCtx.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
-    patternCtx.lineWidth = lineWidth;
-    patternCtx.strokeStyle = lineColor;
-    patternCtx.drawImage(img, 0, 0);
-  };
-
-  return patternCanvas;
-}
-
 export function setCustomPattern(
   ctx: CanvasRenderingContext2D,
   lineWidth = 2,
@@ -329,25 +356,29 @@ export function setCustomPattern(
   };
 }
 
-function renderLinkIcon() {
-  const iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  const iconPath = document.createElementNS(
-    'http://www.w3.org/2000/svg',
-    'path'
-  );
+export function getCanvasCustomPattern(
+  lineWidth = 2,
+  backgroundColor = '#F2B6A050',
+  lineColor = 'rgb(30, 70, 200)'
+) {
+  const patternCanvas = document.createElement('canvas');
+  const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-  iconSvg.setAttribute('fill', 'none');
-  iconSvg.setAttribute('viewBox', '0 0 24 24');
-  iconSvg.setAttribute('stroke', 'black');
-  iconSvg.classList.add('post-icon');
+  patternCanvas.width = 109;
+  patternCanvas.height = 109;
 
-  iconPath.setAttribute(
-    'd',
-    'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1'
-  );
-  iconPath.setAttribute('stroke-linecap', 'round');
-  iconPath.setAttribute('stroke-linejoin', 'round');
-  iconPath.setAttribute('stroke-width', '2');
+  patternCtx.fillStyle = backgroundColor;
+  patternCtx.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
 
-  iconSvg.appendChild(iconPath);
+  patternCtx.lineWidth = lineWidth;
+  patternCtx.strokeStyle = lineColor;
+  patternCtx.lineCap = 'square';
+  patternCtx.fillStyle = backgroundColor;
+  patternCtx.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
+  patternCtx.lineWidth = lineWidth;
+  patternCtx.strokeStyle = lineColor;
+
+  drawGravelPattern(patternCtx);
+
+  return patternCanvas;
 }
