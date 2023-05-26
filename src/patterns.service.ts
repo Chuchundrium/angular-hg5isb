@@ -145,8 +145,8 @@ export function getCrossHatchPattern2(
   [
     { angle: lineAngle1, color: lineColor1 },
     { angle: lineAngle2, color: lineColor2 },
-  ].forEach((line) => {
-    const lineAngleRad = line.angle * (Math.PI / 180);
+  ].forEach(({ angle, color }) => {
+    const lineAngleRad = angle * (Math.PI / 180);
     const k = Math.tan(lineAngleRad);
     const b = (offset + lineWidth) / Math.cos(lineAngleRad);
 
@@ -154,13 +154,13 @@ export function getCrossHatchPattern2(
     const dy = b;
 
     const count = Math.abs(
-      Math.abs(line.angle) > 45 ? Math.ceil(width / dx) : Math.ceil(height / dy)
+      Math.abs(angle) > 45 ? Math.ceil(width / dx) : Math.ceil(height / dy)
     );
 
-    const startI = line.angle > 0 ? -1 * count : 0;
-    const endI = line.angle > 0 ? count : count * 2;
+    const startI = angle > 0 ? -1 * count : 0;
+    const endI = angle > 0 ? count : count * 2;
 
-    patternCtx.strokeStyle = line.color;
+    patternCtx.strokeStyle = color;
     patternCtx.beginPath();
     for (let i = startI; i < endI; i++) {
       const x1 = -10;
