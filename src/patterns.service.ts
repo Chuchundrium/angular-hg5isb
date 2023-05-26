@@ -48,6 +48,7 @@ export function getVerticalHatchPattern(
   patternCtx.fillStyle = backgroundColor;
   patternCtx.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
 
+  patternCtx.setLineDash([7, 5, 2, 5, 2, 5]);
   patternCtx.strokeStyle = lineColor;
   patternCtx.lineWidth = lineWidth;
 
@@ -111,20 +112,17 @@ export function getDiagonalHatchPattern(
 export function getCrossHatchPattern2(
   width = 300,
   height = 300,
-  lineWidth = 8,
+  lineWidth = 2,
   offset = 20,
   backgroundColor = '#E8F6EF07',
   lineColor1 = '#4C4C6D',
-  lineAngle1 = 45,
+  lineAngle1 = 10,
   lineColor2 = '#1B9C85',
-  lineAngle2 = -45
+  lineAngle2 = 90
 ) {
-  const defaultWidth = 50;
-  const lineAngleRad1 = lineAngle1 * (Math.PI / 180);
+  // O-TODO: handle 90 deg: dash doesn't work, lineWidth = 1 - not all lines are visible
 
   // y = kx + b
-  const k1 = Math.tan(lineAngleRad1);
-  const b1 = (offset + lineWidth) / Math.cos(lineAngleRad1);
   const y = (x: number, c: number, k: number, b: number) => k * x + b * c;
 
   const patternCanvas = document.createElement('canvas');
@@ -140,25 +138,40 @@ export function getCrossHatchPattern2(
     patternCanvas.height
   );
 
-  patternCtx.strokeStyle = lineColor1;
+  // patternCtx.setLineDash([7, 5, 2, 5, 2, 5]);
   patternCtx.lineWidth = lineWidth;
-  patternCtx.lineCap = 'square';
+  // patternCtx.lineCap = 'square';
 
-  patternCtx.beginPath();
+  [
+    { angle: lineAngle1, color: lineColor1 },
+    { angle: lineAngle2, color: lineColor2 },
+  ].forEach((line) => {
+    const lineAngleRad = line.angle * (Math.PI / 180);
+    const k = Math.tan(lineAngleRad);
+    const b = (offset + lineWidth) / Math.cos(lineAngleRad);
 
-  const count = Math.round(width / b1);
-  const startI = lineAngle1 > 0 ? -1 * count : 0;
-  const endI = lineAngle1 > 0 ? count : count * 2;
+    const dx = (offset + lineWidth) / Math.sin(lineAngleRad);
+    const dy = b;
 
-  for (let i = startI; i < endI; i++) {
-    console.log(i);
-    const x1 = -10;
-    const x2 = width + 10;
-    patternCtx.moveTo(x1, y(x1, i, k1, b1));
-    patternCtx.lineTo(x2, y(x2, i, k1, b1));
-  }
+    const count = Math.abs(
+      Math.abs(line.angle) > 45 ? Math.ceil(width / dx) : Math.ceil(height / dy)
+    );
 
-  patternCtx.stroke();
+    const startI = line.angle > 0 ? -1 * count : 0;
+    const endI = line.angle > 0 ? count : count * 2;
+
+    patternCtx.strokeStyle = line.color;
+    patternCtx.beginPath();
+    for (let i = startI; i < endI; i++) {
+      const x1 = -10;
+      const x2 = width;
+      patternCtx.moveTo(x1, y(x1, i, k, b));
+      patternCtx.lineTo(x2, y(x2, i, k, b));
+    }
+
+    patternCtx.stroke();
+  });
+
   return patternCanvas;
 }
 

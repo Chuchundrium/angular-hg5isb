@@ -6,6 +6,7 @@ import {
   getCrossHatchPattern2,
   getHoneycombsPattern,
   getHorizontalHatchPattern,
+  getVerticalHatchPattern,
   setCustomPattern,
 } from './patterns.service';
 
