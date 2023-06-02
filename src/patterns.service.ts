@@ -183,7 +183,7 @@ export function getCrossHatchPattern(
   lineColor1 = '#FC4F00',
   lineColor2 = '#394867'
 ) {
-  const patternWidth = Math.sqrt(Math.pow((offset + lineWidth) * 2, 2) / 2);
+  const patternWidth = ((offset + lineWidth) * 2) / Math.sqrt(2);
   const patternHeight = patternWidth;
   // (x0, y0) -- (x1, y0)
   //    |           |
@@ -352,10 +352,11 @@ export function setCustomPattern(
   const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
 
   const img = new Image();
+  img.src = 'assets/tile.svg';
 
-  img.src =
-    'data:image/svg+xml; charset=utf8,' +
-    CUSTOM_PATTERNS_MAPPING['GRAVEL'](lineColor, lineWidth);
+  // img.src =
+  //   'data:image/svg+xml; charset=utf8,' +
+  //   CUSTOM_PATTERNS_MAPPING['GRAVEL'](lineColor, lineWidth);
 
   img.onload = () => {
     patternCanvas.width = img.width;

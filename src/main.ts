@@ -37,7 +37,7 @@ export class AppComponent implements AfterViewInit {
     // const patternCanvas = getHorizontalHatchPattern();
     // const patternCanvas = getVerticalHatchPattern();
     // const patternCanvas = getDiagonalHatchPatternUpd();
-    const patternCanvas = getCrossHatchPattern2();
+    // const patternCanvas = getCrossHatchPattern2();
     // const patternCanvas = getGravelPattern();
     // const patternCanvas = getHoneycombsPattern();
     // const patternCanvas = getCanvasCustomPattern();
@@ -47,13 +47,13 @@ export class AppComponent implements AfterViewInit {
     canvasA.height = 300;
     const ctxA = canvasA.getContext('2d') as CanvasRenderingContext2D;
 
-    // setCustomPattern(ctxA);
+    setCustomPattern(ctxA);
 
-    ctxA.fillStyle = ctxA.createPattern(
-      patternCanvas,
-      'repeat'
-    ) as CanvasPattern;
-    ctxA.fillRect(0, 0, 300, 300);
+    // ctxA.fillStyle = ctxA.createPattern(
+    //   patternCanvas,
+    //   'repeat'
+    // ) as CanvasPattern;
+    // ctxA.fillRect(0, 0, 300, 300);
 
     // const canvasB = this.canvasB.nativeElement;
     // canvasB.width = 300;
