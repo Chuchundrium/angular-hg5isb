@@ -13,3 +13,7 @@ function greatestCommonDivisor(a: number, b: number) {
   }
   return a;
 }
+
+export function fromDegToRad(angle: number) {
+  return angle * (Math.PI / 180);
+}
