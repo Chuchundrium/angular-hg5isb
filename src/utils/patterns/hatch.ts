@@ -69,8 +69,10 @@ export function getHatchPattern(
     style.cross_pattern_spacing,
     style.cross_pattern_angle
   );
-  const patternCanvasWidth = leastCommonMultiple(minWidth1, minWidth2);
-  const patternCanvasHeight = leastCommonMultiple(minHeight1, minHeight2);
+  // const patternCanvasWidth = leastCommonMultiple(minWidth1, minWidth2);
+  // const patternCanvasHeight = leastCommonMultiple(minHeight1, minHeight2);
+  const patternCanvasWidth = 300;
+  const patternCanvasHeight = 300;
   // const width = 300;
   // const height = 300;
 
