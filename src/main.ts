@@ -9,6 +9,7 @@ import {
   getVerticalHatchPattern,
   setCustomPattern,
 } from './patterns.service';
+import { getHatchPattern } from './utils/patterns/hatch';
 
 @Component({
   selector: 'my-app',
@@ -40,20 +41,20 @@ export class AppComponent implements AfterViewInit {
     // const patternCanvas = getCrossHatchPattern2();
     // const patternCanvas = getGravelPattern();
     // const patternCanvas = getHoneycombsPattern();
-    // const patternCanvas = getCanvasCustomPattern();
+    const patternCanvas = getHatchPattern();
 
     const canvasA = this.canvasA.nativeElement;
     canvasA.width = 300;
     canvasA.height = 300;
     const ctxA = canvasA.getContext('2d') as CanvasRenderingContext2D;
 
-    setCustomPattern(ctxA);
+    // setCustomPattern(ctxA);
 
-    // ctxA.fillStyle = ctxA.createPattern(
-    //   patternCanvas,
-    //   'repeat'
-    // ) as CanvasPattern;
-    // ctxA.fillRect(0, 0, 300, 300);
+    ctxA.fillStyle = ctxA.createPattern(
+      patternCanvas,
+      'repeat'
+    ) as CanvasPattern;
+    ctxA.fillRect(0, 0, 300, 300);
 
     // const canvasB = this.canvasB.nativeElement;
     // canvasB.width = 300;
