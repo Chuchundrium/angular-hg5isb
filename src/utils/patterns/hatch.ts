@@ -48,7 +48,7 @@ const patternCanvasSize = (
   const k = 1 / Math.tan(angleRad);
   const patternHeight = spacing / Math.cos(angleRad) + lineWidth;
   const patternWidth = patternHeight * k;
-  return [patternWidth, patternHeight];
+  return [Math.round(patternWidth), Math.ceil(patternHeight)];
 };
 
 // before to call this func: parse the style and multiply to meterToPixelRatio everything that necessery
@@ -69,8 +69,10 @@ export function getHatchPattern(
     style.cross_pattern_spacing,
     style.cross_pattern_angle
   );
-  // const patternCanvasWidth = leastCommonMultiple(minWidth1, minWidth2);
-  // const patternCanvasHeight = leastCommonMultiple(minHeight1, minHeight2);
+
+  const patternCanvasWidthA = leastCommonMultiple(3, 5);
+  // const patternCanvasHeightA = leastCommonMultiple(minHeight1, minHeight2);
+  console.log({ patternCanvasWidthA });
   const patternCanvasWidth = 300;
   const patternCanvasHeight = 300;
   // const width = 300;
