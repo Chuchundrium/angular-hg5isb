@@ -48,7 +48,10 @@ const patternCanvasSize = (
   const k = 1 / Math.tan(angleRad);
   const patternHeight = spacing / Math.cos(angleRad) + lineWidth;
   const patternWidth = patternHeight * k;
-  return [Math.round(patternWidth), Math.ceil(patternHeight)];
+  return [
+    Math.abs(Math.ceil(patternWidth)),
+    Math.abs(Math.ceil(patternHeight)),
+  ];
 };
 
 // before to call this func: parse the style and multiply to meterToPixelRatio everything that necessery

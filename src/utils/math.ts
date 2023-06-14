@@ -1,4 +1,7 @@
 export function leastCommonMultiple(a: number, b: number): number {
+  if (a < 0 || b < 0 || Number.isInteger(a) || Number.isInteger(b)) {
+    return 0;
+  }
   console.log('leastCommonMultiple...', a, b);
 
   const gcd = greatestCommonDivisor(a, b);
