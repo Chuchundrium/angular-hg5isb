@@ -23,7 +23,7 @@ export interface FillStyle {
 }
 
 const TEST_HATCH: FillStyle = {
-  color: '#E8F6EF07',
+  color: '#E8F6EF',
   pattern_color: '#4C4C6D',
   pattern_style: [7, 3],
   pattern_angle: 60,
