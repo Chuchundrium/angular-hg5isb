@@ -1,5 +1,5 @@
 import { isDefined } from '../general';
-import { fromDegToRad, leastCommonMultiple } from '../math';
+import { fromDegToRad, leastCommonMultiple, y } from '../math';
 
 /**
  * @prop { string } color - background color
@@ -36,8 +36,6 @@ const TEST_HATCH: FillStyle = {
 const DEFAULT_LINE_WIDTH_PX = 2;
 const getLineWidth = (weight: number) => (weight + 1) * DEFAULT_LINE_WIDTH_PX;
 // O-TODO: handle 90 deg: dash doesn't work, lineWidth = 1 - not all lines are visible
-// y = kx + b
-const y = (x: number, c: number, k: number, b: number) => k * x + b * c;
 
 const patternCanvasSize = (
   lineWidth: number,
@@ -126,8 +124,8 @@ export function getHatchPattern(
     for (let i = startI; i < endI; i++) {
       const x1 = -10;
       const x2 = patternCanvasWidth;
-      patternCtx.moveTo(x1, y(x1, i, k, b));
-      patternCtx.lineTo(x2, y(x2, i, k, b));
+      patternCtx.moveTo(x1, y(x1, k, b * i));
+      patternCtx.lineTo(x2, y(x2, k, b * i));
     }
 
     patternCtx.stroke();

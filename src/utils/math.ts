@@ -22,3 +22,6 @@ function greatestCommonDivisor(a: number, b: number) {
 export function fromDegToRad(angle: number) {
   return angle * (Math.PI / 180);
 }
+
+// y = kx + b
+export const y = (x: number, k: number, b: number) => k * x + b;
