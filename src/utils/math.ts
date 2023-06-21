@@ -25,3 +25,4 @@ export function fromDegToRad(angle: number) {
 
 // y = kx + b
 export const y = (x: number, k: number, b: number) => k * x + b;
+export const x = (y: number, k: number, b: number) => (y - b) / k;

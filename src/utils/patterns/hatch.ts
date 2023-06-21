@@ -1,9 +1,9 @@
 import { isDefined } from '../general';
-import { fromDegToRad, leastCommonMultiple, y } from '../math';
+import {fromDegToRad, leastCommonMultiple, x, y} from '../math';
 
 /**
  * @prop { string } color - background color
- * @prop { string } pattern_color - #RRGGBBAA (AA is alpha for opacity)
+ * @prop { string } pattern_color - '#RRGGBBAA' (AA is alpha for opacity)
  * @prop { number[] } pattern_style - [length of dash, length of space, length of dash, length of space, ...];  [1, 0] - solid line.
  * @prop { number } pattern_angle - DEG, from -90 to 90
  * @prop { number } cross_pattern_angle - DEG, from -90 to 90
@@ -52,9 +52,6 @@ const patternCanvasSize = (
   ];
 };
 
-// before to call this func: parse the style and multiply to meterToPixelRatio everything that necessery
-// calc lineWidth before too - ?
-// convert deg to rad before too - !
 export function getHatchPattern(
   style: FillStyle = TEST_HATCH
 ): HTMLCanvasElement {
@@ -73,11 +70,8 @@ export function getHatchPattern(
 
   const patternCanvasWidthA = leastCommonMultiple(3, 5);
   // const patternCanvasHeightA = leastCommonMultiple(minHeight1, minHeight2);
-  console.log({ patternCanvasWidthA });
   const patternCanvasWidth = 300;
   const patternCanvasHeight = 300;
-  // const width = 300;
-  // const height = 300;
 
   const patternCanvas = document.createElement('canvas');
   const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -104,28 +98,60 @@ export function getHatchPattern(
       spacing: style.cross_pattern_spacing,
     },
   ].forEach(({ angle, color, spacing }) => {
-    const lineAngleRad = fromDegToRad(angle);
-    const k = Math.tan(lineAngleRad);
-    const b = (spacing + lineWidth) / Math.cos(lineAngleRad);
-
-    const dx = (spacing + lineWidth) / Math.sin(lineAngleRad);
-    const dy = b;
-    const count = Math.abs(
-      Math.abs(angle) > 45
-        ? Math.ceil(patternCanvasWidth / dx)
-        : Math.ceil(patternCanvasHeight / dy)
-    );
-
-    const startI = angle > 0 ? -1 * count : 0;
-    const endI = angle > 0 ? count : count * 2;
-
     patternCtx.strokeStyle = color;
     patternCtx.beginPath();
-    for (let i = startI; i < endI; i++) {
-      const x1 = -10;
+
+    const lineAngleRad = fromDegToRad(angle);
+    const is90 = lineAngleRad === Math.PI / 2 || lineAngleRad === -Math.PI / 2;
+    const is0 = lineAngleRad === 0;
+    const isNegative = lineAngleRad < 0;
+    console.log({ isNegative });
+
+    if (is90) {
+      const dx = Math.abs(Math.ceil((spacing + lineWidth)));
+      const countX = Math.ceil(patternCanvasWidth / dx);
+      let x = 0;
+      const y1 = 0;
+      const y2 = patternCanvasHeight;
+
+      for (let i = 0; i < countX; i++) {
+        patternCtx.moveTo(x, y1);
+        patternCtx.lineTo(x, y2);
+        x += dx;
+      }
+    } else if (is0) {
+      const dy = Math.abs(Math.ceil((spacing + lineWidth)));
+      const countY = Math.ceil(patternCanvasHeight / dy);
+      const x1 = 0;
       const x2 = patternCanvasWidth;
-      patternCtx.moveTo(x1, y(x1, k, b * i));
-      patternCtx.lineTo(x2, y(x2, k, b * i));
+      let y = 0;
+
+      for (let i = 0; i < countY; i++) {
+        patternCtx.moveTo(x1, y);
+        patternCtx.lineTo(x2, y);
+        y += dy;
+      }
+    } else {
+      const k = Math.tan(lineAngleRad);
+      const b = Math.ceil((spacing + lineWidth) / Math.cos(lineAngleRad));
+      const dx = Math.abs(Math.ceil((spacing + lineWidth) / Math.sin(lineAngleRad)));
+      const dy = Math.abs(b);
+
+      const countX = Math.ceil(patternCanvasWidth / dx);
+      const countY = Math.ceil(patternCanvasHeight / dy);
+      const count = countX + countY;
+      const y1 = 0;
+      const y2 = patternCanvasHeight;
+
+      let x1 = isNegative ? 0 : -1 * dx * (countY);
+      let x2 = isNegative ? Math.ceil(x(y2, k, b)) - dx : dx + x1 + Math.ceil(x(y2, k, b));
+
+      for (let i = 0; i < count; i++) {
+        patternCtx.moveTo(x1, y1);
+        patternCtx.lineTo(x2, y2);
+        x1 += dx;
+        x2 += dx;
+      }
     }
 
     patternCtx.stroke();
