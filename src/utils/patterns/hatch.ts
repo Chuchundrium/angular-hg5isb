@@ -1,6 +1,6 @@
 import { isDefined } from '../general';
 import { leastCommonMultiple, x } from '../math';
-import { FillStyle, getLineWidth, TEST_HATCH } from './patterns-model';
+import { detectFillType, FillStyle, getLineWidth } from './patterns-model';
 
 const patternCanvasSize = (
   lineWidth: number,
@@ -16,12 +16,11 @@ const patternCanvasSize = (
   ];
 };
 
-export function getHatchPattern(
-  style: FillStyle = TEST_HATCH
-): HTMLCanvasElement {
+export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
   style = {
     ...style,
     width: getLineWidth(style.weight),
+    fill_type_detected: detectFillType(style)
   };
 
   const [minWidth1, minHeight1] = patternCanvasSize(
@@ -53,19 +52,22 @@ export function getHatchPattern(
   }
   patternCtx.lineWidth = style.width;
 
-  [
-    {
+  const linesData = [];
+  if (['lines', 'cross-lines'].includes(style.fill_type_detected)) {
+    linesData.push({
       angle: style.pattern_angle_rad,
-      color: style.pattern_color,
       spacing: style.pattern_spacing_px,
-    },
-    {
+    });
+  }
+  if (style.fill_type_detected === 'cross-lines') {
+    linesData.push({
       angle: style.cross_pattern_angle_rad,
-      color: style.pattern_color,
       spacing: style.cross_pattern_spacing_px,
-    },
-  ].forEach(({ angle, color, spacing }) => {
-    patternCtx.strokeStyle = color;
+    })
+  }
+
+  linesData.forEach(({ angle, spacing }) => {
+    patternCtx.strokeStyle = style.pattern_color;
     patternCtx.beginPath();
 
     const isRightAngle = angle === Math.PI / 2 || angle === -Math.PI / 2;

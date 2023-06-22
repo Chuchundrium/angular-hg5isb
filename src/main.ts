@@ -10,6 +10,7 @@ import {
   setCustomPattern,
 } from './patterns.service';
 import { getHatchPattern } from './utils/patterns/hatch';
+import {TEST_CROSS_HATCH, TEST_LINES_HATCH} from "./utils/patterns/patterns-model";
 
 @Component({
   selector: 'my-app',
@@ -41,7 +42,9 @@ export class AppComponent implements AfterViewInit {
     // const patternCanvas = getCrossHatchPattern2();
     // const patternCanvas = getGravelPattern();
     // const patternCanvas = getHoneycombsPattern();
-    const patternCanvas = getHatchPattern();
+
+    // const patternCanvas = getHatchPattern(TEST_CROSS_HATCH);
+    const patternCanvas = getHatchPattern(TEST_LINES_HATCH);
 
     const canvasA = this.canvasA.nativeElement;
     canvasA.width = 300;
