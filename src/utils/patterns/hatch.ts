@@ -35,7 +35,6 @@ const TEST_HATCH: FillStyle = {
 
 const DEFAULT_LINE_WIDTH_PX = 2;
 const getLineWidth = (weight: number) => (weight + 1) * DEFAULT_LINE_WIDTH_PX;
-// O-TODO: handle 90 deg: dash doesn't work, lineWidth = 1 - not all lines are visible
 
 const patternCanvasSize = (
   lineWidth: number,
@@ -102,12 +101,11 @@ export function getHatchPattern(
     patternCtx.beginPath();
 
     const lineAngleRad = fromDegToRad(angle);
-    const is90 = lineAngleRad === Math.PI / 2 || lineAngleRad === -Math.PI / 2;
-    const is0 = lineAngleRad === 0;
-    const isNegative = lineAngleRad < 0;
-    console.log({ isNegative });
+    const isRightAngle = lineAngleRad === Math.PI / 2 || lineAngleRad === -Math.PI / 2;
+    const isZeroAngle = lineAngleRad === 0;
+    const isNegativeAngle = !isRightAngle && !isZeroAngle && lineAngleRad < 0;
 
-    if (is90) {
+    if (isRightAngle) {
       const dx = Math.abs(Math.ceil((spacing + lineWidth)));
       const countX = Math.ceil(patternCanvasWidth / dx);
       let x = 0;
@@ -119,7 +117,7 @@ export function getHatchPattern(
         patternCtx.lineTo(x, y2);
         x += dx;
       }
-    } else if (is0) {
+    } else if (isZeroAngle) {
       const dy = Math.abs(Math.ceil((spacing + lineWidth)));
       const countY = Math.ceil(patternCanvasHeight / dy);
       const x1 = 0;
@@ -136,15 +134,14 @@ export function getHatchPattern(
       const b = Math.ceil((spacing + lineWidth) / Math.cos(lineAngleRad));
       const dx = Math.abs(Math.ceil((spacing + lineWidth) / Math.sin(lineAngleRad)));
       const dy = Math.abs(b);
-
       const countX = Math.ceil(patternCanvasWidth / dx);
       const countY = Math.ceil(patternCanvasHeight / dy);
       const count = countX + countY;
       const y1 = 0;
       const y2 = patternCanvasHeight;
 
-      let x1 = isNegative ? 0 : -1 * dx * (countY);
-      let x2 = isNegative ? Math.ceil(x(y2, k, b)) - dx : dx + x1 + Math.ceil(x(y2, k, b));
+      let x1 = isNegativeAngle ? 0 : -1 * dx * (countY);
+      let x2 = isNegativeAngle ? Math.ceil(x(y2, k, b)) - dx : dx + x1 + Math.ceil(x(y2, k, b));
 
       for (let i = 0; i < count; i++) {
         patternCtx.moveTo(x1, y1);
