@@ -1,47 +1,12 @@
 import { isDefined } from '../general';
-import {fromDegToRad, leastCommonMultiple, x, y} from '../math';
-
-/**
- * @prop { string } color - background color
- * @prop { string } pattern_color - '#RRGGBBAA' (AA is alpha for opacity)
- * @prop { number[] } pattern_style - [length of dash, length of space, length of dash, length of space, ...];  [1, 0] - solid line.
- * @prop { number } pattern_angle - DEG, from -90 to 90
- * @prop { number } cross_pattern_angle - DEG, from -90 to 90
- * @prop { number } pattern_spacing - ground units (the units used for the design meters/mm/foot etc)
- * @prop { number } cross_pattern_spacing - ground units (the units used for the design meters/mm/foot etc)*
- * @prop { number } weight - line width = (weight + 1) * default (default = 2px) ;
- */
-export interface FillStyle {
-  color: string;
-  pattern_color: string;
-  pattern_style: Array<number>;
-  pattern_angle: number;
-  cross_pattern_angle: number;
-  pattern_spacing: number;
-  cross_pattern_spacing: number;
-  weight: number;
-}
-
-const TEST_HATCH: FillStyle = {
-  color: '#E8F6EF',
-  pattern_color: '#4C4C6D',
-  pattern_style: [7, 3],
-  pattern_angle: 60,
-  cross_pattern_angle: -60,
-  pattern_spacing: 20,
-  cross_pattern_spacing: 40,
-  weight: 0,
-};
-
-const DEFAULT_LINE_WIDTH_PX = 2;
-const getLineWidth = (weight: number) => (weight + 1) * DEFAULT_LINE_WIDTH_PX;
+import { leastCommonMultiple, x } from '../math';
+import { FillStyle, getLineWidth, TEST_HATCH } from './patterns-model';
 
 const patternCanvasSize = (
   lineWidth: number,
   spacing: number,
-  angle: number
+  angleRad: number
 ) => {
-  const angleRad = angle * (Math.PI / 180);
   const k = 1 / Math.tan(angleRad);
   const patternHeight = spacing / Math.cos(angleRad) + lineWidth;
   const patternWidth = patternHeight * k;
@@ -54,17 +19,20 @@ const patternCanvasSize = (
 export function getHatchPattern(
   style: FillStyle = TEST_HATCH
 ): HTMLCanvasElement {
-  const lineWidth = getLineWidth(style.weight);
+  style = {
+    ...style,
+    width: getLineWidth(style.weight),
+  };
 
   const [minWidth1, minHeight1] = patternCanvasSize(
-    lineWidth,
-    style.pattern_spacing,
-    style.pattern_angle
+    style.width,
+    style.pattern_spacing_px,
+    style.pattern_angle_rad
   );
   const [minWidth2, minHeight2] = patternCanvasSize(
-    lineWidth,
-    style.cross_pattern_spacing,
-    style.cross_pattern_angle
+    style.width,
+    style.cross_pattern_spacing_px,
+    style.cross_pattern_angle_rad
   );
 
   const patternCanvasWidthA = leastCommonMultiple(3, 5);
@@ -83,30 +51,29 @@ export function getHatchPattern(
   if (isDefined(style.pattern_style)) {
     patternCtx.setLineDash(style.pattern_style);
   }
-  patternCtx.lineWidth = lineWidth;
+  patternCtx.lineWidth = style.width;
 
   [
     {
-      angle: style.pattern_angle,
+      angle: style.pattern_angle_rad,
       color: style.pattern_color,
-      spacing: style.pattern_spacing,
+      spacing: style.pattern_spacing_px,
     },
     {
-      angle: style.cross_pattern_angle,
+      angle: style.cross_pattern_angle_rad,
       color: style.pattern_color,
-      spacing: style.cross_pattern_spacing,
+      spacing: style.cross_pattern_spacing_px,
     },
   ].forEach(({ angle, color, spacing }) => {
     patternCtx.strokeStyle = color;
     patternCtx.beginPath();
 
-    const lineAngleRad = fromDegToRad(angle);
-    const isRightAngle = lineAngleRad === Math.PI / 2 || lineAngleRad === -Math.PI / 2;
-    const isZeroAngle = lineAngleRad === 0;
-    const isNegativeAngle = !isRightAngle && !isZeroAngle && lineAngleRad < 0;
+    const isRightAngle = angle === Math.PI / 2 || angle === -Math.PI / 2;
+    const isZeroAngle = angle === 0;
+    const isNegativeAngle = !isRightAngle && !isZeroAngle && angle < 0;
 
     if (isRightAngle) {
-      const dx = Math.abs(Math.ceil((spacing + lineWidth)));
+      const dx = Math.abs(Math.ceil(spacing + style.width));
       const countX = Math.ceil(patternCanvasWidth / dx);
       let x = 0;
       const y1 = 0;
@@ -118,7 +85,7 @@ export function getHatchPattern(
         x += dx;
       }
     } else if (isZeroAngle) {
-      const dy = Math.abs(Math.ceil((spacing + lineWidth)));
+      const dy = Math.abs(Math.ceil(spacing + style.width));
       const countY = Math.ceil(patternCanvasHeight / dy);
       const x1 = 0;
       const x2 = patternCanvasWidth;
@@ -130,9 +97,9 @@ export function getHatchPattern(
         y += dy;
       }
     } else {
-      const k = Math.tan(lineAngleRad);
-      const b = Math.ceil((spacing + lineWidth) / Math.cos(lineAngleRad));
-      const dx = Math.abs(Math.ceil((spacing + lineWidth) / Math.sin(lineAngleRad)));
+      const k = Math.tan(angle);
+      const b = Math.ceil((spacing + style.width) / Math.cos(angle));
+      const dx = Math.abs(Math.ceil((spacing + style.width) / Math.sin(angle)));
       const dy = Math.abs(b);
       const countX = Math.ceil(patternCanvasWidth / dx);
       const countY = Math.ceil(patternCanvasHeight / dy);
@@ -140,8 +107,10 @@ export function getHatchPattern(
       const y1 = 0;
       const y2 = patternCanvasHeight;
 
-      let x1 = isNegativeAngle ? 0 : -1 * dx * (countY);
-      let x2 = isNegativeAngle ? Math.ceil(x(y2, k, b)) - dx : dx + x1 + Math.ceil(x(y2, k, b));
+      let x1 = isNegativeAngle ? 0 : -1 * dx * countY;
+      let x2 = isNegativeAngle
+        ? Math.ceil(x(y2, k, b)) - dx
+        : dx + x1 + Math.ceil(x(y2, k, b));
 
       for (let i = 0; i < count; i++) {
         patternCtx.moveTo(x1, y1);
