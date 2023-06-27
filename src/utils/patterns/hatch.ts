@@ -52,7 +52,7 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
   }
   patternCtx.lineWidth = style.width;
 
-  const linesData = [];
+  const linesData: { angle: number, spacing: number }[] = [];
   if (['lines', 'cross-lines'].includes(style.fill_type_detected)) {
     linesData.push({
       angle: style.pattern_angle_rad,

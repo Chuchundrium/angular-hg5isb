@@ -57,8 +57,17 @@ export class AppComponent implements AfterViewInit {
       patternCanvas,
       'repeat'
     ) as CanvasPattern;
-    ctxA.fillRect(0, 0, 300, 300);
+    // ctxA.fillRect(0, 0, 300, 300);
 
+    ctxA.beginPath();
+    ctxA.moveTo(20, 10);
+    ctxA.lineTo(100, 10);
+    ctxA.lineTo(200, 100);
+    ctxA.lineTo(100, 50);
+    ctxA.lineTo(20, 10);
+    ctxA.fill();
+    ctxA.stroke();
+    ctxA.restore();
     // const canvasB = this.canvasB.nativeElement;
     // canvasB.width = 300;
     // canvasB.height = 300;
