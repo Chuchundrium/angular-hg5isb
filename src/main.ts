@@ -102,16 +102,30 @@ export class AppComponent implements AfterViewInit {
     canvas1.width = 1024;
     canvas1.height = 1024;
     const ctx1 = canvas1.getContext('2d') as CanvasRenderingContext2D;
+    ctx1.lineWidth = 10;
+    ctx1.strokeStyle = '#007f0055';
+    ctx1.setLineDash([40, 20]);
     ctx1.beginPath();
     // {id: '20', k: 0, x: 789.5, y: 1044}
     // {id: '20', k: 1, x: 643.5, y: 736.5}
     // {id: '20', k: 2, x: 851, y: 641.5}
     ctx1.beginPath();
-    ctx1.moveTo(789.5, 1044);
-    ctx1.lineTo(643.5, 736.5);
-    ctx1.lineTo(851, 641.5);
+    ctx1.moveTo(4176 * 0.25, 1386 * 0.25);
+    ctx1.lineTo(3793 * 0.25, 1458 * 0.25);
+    ctx1.lineTo(3769 * 0.25, 1606 * 0.25);
+    ctx1.lineTo(3730 * 0.25, 1851 * 0.25);
+    ctx1.lineTo(3681 * 0.25, 2160 * 0.25);
+    ctx1.lineTo(2884 * 0.25, 3043 * 0.25);
+    ctx1.lineTo(2680 * 0.25, 4172 * 0.25);
+    ctx1.lineTo(2702 * 0.25, 4176 * 0.25);
+    ctx1.fillStyle = '#007f0044';
     ctx1.fill();
     ctx1.stroke();
+
+    // ctx1.lineWidth = 10;
+    // ctx1.strokeStyle = 'gray';
+    // ctx1.setLineDash([])
+    // ctx1.strokeRect(0, 0, 1024, 1024);
     ctx1.restore();
 
     const canvas2 = this.canvas2.nativeElement;
@@ -122,44 +136,66 @@ export class AppComponent implements AfterViewInit {
     // {id: '20', k: 1, x: 1037.5, y: 13.25}
     // {id: '20', k: 2, x: 833.5, y: 112.25}
     // {id: '20', k: 3, x: 770.5, y: -20}
+    ctx2.lineWidth = 10;
+    ctx2.strokeStyle = '#007f0044';
+    ctx2.setLineDash([40, 20]);
+    ctx2.fillStyle = '#007f0044';
     ctx2.beginPath();
-    ctx2.moveTo(1021.75, -20);
-    ctx2.lineTo(1037.5, 13.25);
-    ctx2.lineTo(833.5, 112.25);
-    ctx2.lineTo(770.5, -20);
+    ctx2.moveTo(2680 * 0.25, 4172 * 0.25);
+    ctx2.lineTo(2884 * 0.25, 3043 * 0.25);
+    ctx2.lineTo(3224 * 0.25, 2539 * 0.25);
+    ctx2.lineTo(3310 * 0.25, 2521 * 0.25);
+    ctx2.lineTo(3365 * 0.25, 2511 * 0.25);
+    ctx2.lineTo(3500 * 0.25, 2426 * 0.25);
+    ctx2.lineTo(3503 * 0.25, 2421 * 0.25);
+    ctx2.lineTo(3552 * 0.25, 2349 * 0.25);
+    ctx2.lineTo(3558 * 0.25, 2340 * 0.25);
+    ctx2.lineTo(3563 * 0.25, 2332 * 0.25);
+    ctx2.lineTo(3576 * 0.25, 2314 * 0.25);
+    ctx2.lineTo(3581 * 0.25, 2309 * 0.25);
+    ctx2.lineTo(3645 * 0.25, 2212 * 0.25);
+    ctx2.lineTo(3681 * 0.25, 2160 * 0.25);
+    ctx2.lineTo(3730 * 0.25, 1851 * 0.25);
+    ctx2.lineTo(3769 * 0.25, 1606 * 0.25);
+    ctx2.lineTo(3793 * 0.25, 1458 * 0.25);
+    ctx2.lineTo(4176 * 0.25, 1386 * 0.25);
+    ctx2.lineTo(4176 * 0.25, 4176 * 0.25);
+    ctx2.lineTo(2702 * 0.25, 4176 * 0.25);
+    ctx2.lineTo(2680 * 0.25, 4172 * 0.25);
     ctx2.fill();
+
     ctx2.stroke();
     ctx2.restore();
 
-    const canvas3 = this.canvas3.nativeElement;
-    canvas3.width = 1024;
-    canvas3.height = 1024;
-    const ctx3 = canvas3.getContext('2d') as CanvasRenderingContext2D;
-    //   {id: '20', k: 0, x: -20, y: 966.25}
-    // {id: '20', k: 1, x: 13.5, y: 1037.25}
-    // {id: '20', k: 2, x: -0.5, y: 1044}
-    ctx3.beginPath();
-    ctx3.moveTo(-20, 966.25);
-    ctx3.lineTo(13.5, 1037.25);
-    ctx3.lineTo(-0.5, 1044);
-    ctx3.fill();
-    ctx3.stroke();
-    ctx3.restore();
+    // const canvas3 = this.canvas3.nativeElement;
+    // canvas3.width = 1024;
+    // canvas3.height = 1024;
+    // const ctx3 = canvas3.getContext('2d') as CanvasRenderingContext2D;
+    // //   {id: '20', k: 0, x: -20, y: 966.25}
+    // // {id: '20', k: 1, x: 13.5, y: 1037.25}
+    // // {id: '20', k: 2, x: -0.5, y: 1044}
+    // ctx3.beginPath();
+    // ctx3.moveTo(-20, 966.25);
+    // ctx3.lineTo(13.5, 1037.25);
+    // ctx3.lineTo(-0.5, 1044);
+    // ctx3.fill();
+    // ctx3.stroke();
+    // ctx3.restore();
 
-    const canvas4 = this.canvas4.nativeElement;
-    canvas4.width = 1024;
-    canvas4.height = 1024;
-    const ctx4 = canvas4.getContext('2d') as CanvasRenderingContext2D;
-    //   {id: '20', k: 0, x: -2.25, y: -20}
-    // {id: '20', k: 1, x: 13.5, y: 13.25}
-    // {id: '20', k: 2, x: -20, y: 29.5}
-    ctx4.beginPath();
-    ctx4.moveTo(-2.25, -20);
-    ctx4.lineTo(13.5, 13.25);
-    ctx4.lineTo(-20, 29.5);
-    ctx4.fill();
-    ctx4.stroke();
-    ctx4.restore();
+    // const canvas4 = this.canvas4.nativeElement;
+    // canvas4.width = 1024;
+    // canvas4.height = 1024;
+    // const ctx4 = canvas4.getContext('2d') as CanvasRenderingContext2D;
+    // //   {id: '20', k: 0, x: -2.25, y: -20}
+    // // {id: '20', k: 1, x: 13.5, y: 13.25}
+    // // {id: '20', k: 2, x: -20, y: 29.5}
+    // ctx4.beginPath();
+    // ctx4.moveTo(-2.25, -20);
+    // ctx4.lineTo(13.5, 13.25);
+    // ctx4.lineTo(-20, 29.5);
+    // ctx4.fill();
+    // ctx4.stroke();
+    // ctx4.restore();
   }
 }
 
