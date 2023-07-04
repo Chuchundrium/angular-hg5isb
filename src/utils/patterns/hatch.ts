@@ -1,6 +1,12 @@
 import { isDefined } from '../general';
 import { leastCommonMultiple, x } from '../math';
-import { detectFillType, FillStyle, getLineWidth } from './patterns-model';
+import {
+  CanvasSize,
+  CANVAS_SIZE,
+  detectFillType,
+  FillStyle,
+  getLineWidth,
+} from './patterns-model';
 
 const patternCanvasSize = (
   lineWidth: number,
@@ -16,12 +22,43 @@ const patternCanvasSize = (
   ];
 };
 
+function getPatternSize(style: FillStyle): CanvasSize {
+  if (style.fill_type_detected === 'lines') {
+    const defaultWidth = 50;
+
+    // y = kx + b
+    const k = Math.tan(style.pattern_angle_rad);
+    const b =
+      (style.pattern_spacing_px + style.width) /
+      Math.cos(style.pattern_angle_rad);
+    const y = (x: number, c: number) => k * x + b * c;
+
+    const width_X = Math.abs(
+      style.pattern_angle_rad === 0 ? defaultWidth : b / k
+    );
+    const height_Y = b;
+    return { w: Math.round(width_X), h: Math.round(height_Y) };
+  } else if (style.fill_type_detected === 'cross-lines') {
+    return;
+  }
+}
+
+function getPatternScale(canvasSize: CanvasSize, patternSize: CanvasSize) {
+  return {
+    x: canvasSize.w / patternSize.w / Math.round(canvasSize.w / patternSize.w),
+    y: canvasSize.h / patternSize.h / Math.round(canvasSize.h / patternSize.h),
+  };
+}
+
 export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
   style = {
     ...style,
     width: getLineWidth(style.weight),
-    fill_type_detected: detectFillType(style)
+    fill_type_detected: detectFillType(style),
   };
+
+  const size = getPatternSize(style);
+  console.log(size);
 
   const [minWidth1, minHeight1] = patternCanvasSize(
     style.width,
@@ -36,14 +73,28 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
 
   const patternCanvasWidthA = leastCommonMultiple(3, 5);
   // const patternCanvasHeightA = leastCommonMultiple(minHeight1, minHeight2);
-  const patternCanvasWidth = 300;
-  const patternCanvasHeight = 300;
+  let patternCanvasWidth = size?.w ?? 300;
+  let patternCanvasHeight = size?.h ?? 300;
 
   const patternCanvas = document.createElement('canvas');
   const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
 
+  const scale = getPatternScale(CANVAS_SIZE, {
+    w: patternCanvasWidth,
+    h: patternCanvasHeight,
+  });
+
+  console.log(scale);
+  // patternCtx.scale(scale.x, scale.y);
+
+  // patternCanvasWidth *= scale.x;
+  // patternCanvasHeight *= scale.y;
   patternCanvas.width = patternCanvasWidth;
   patternCanvas.height = patternCanvasHeight;
+
+  // patternCanvas.width = patternCanvasWidth * scale.x;
+  // patternCanvas.height = patternCanvasHeight * scale.y;
+
   patternCtx.fillStyle = style.color;
   patternCtx.fillRect(0, 0, patternCanvasWidth, patternCanvasHeight);
 
@@ -52,7 +103,7 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
   }
   patternCtx.lineWidth = style.width;
 
-  const linesData: { angle: number, spacing: number }[] = [];
+  const linesData: { angle: number; spacing: number }[] = [];
   if (['lines', 'cross-lines'].includes(style.fill_type_detected)) {
     linesData.push({
       angle: style.pattern_angle_rad,
@@ -63,7 +114,7 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
     linesData.push({
       angle: style.cross_pattern_angle_rad,
       spacing: style.cross_pattern_spacing_px,
-    })
+    });
   }
 
   linesData.forEach(({ angle, spacing }) => {
@@ -123,6 +174,10 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
     }
 
     patternCtx.stroke();
+
+    patternCtx.setLineDash([]);
+    patternCtx.lineWidth = 1;
+    patternCtx.strokeRect(0, 0, patternCanvas.width, patternCanvas.height);
   });
 
   return patternCanvas;
