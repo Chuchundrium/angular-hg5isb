@@ -52,8 +52,8 @@ export class AppComponent implements AfterViewInit {
     // const patternCanvas = getGravelPattern();
     // const patternCanvas = getHoneycombsPattern();
 
-    // const patternCanvas = getHatchPattern(TEST_CROSS_HATCH);
-    const patternCanvas = getHatchPattern(TEST_LINES_HATCH);
+    const patternCanvas = getHatchPattern(TEST_CROSS_HATCH);
+    // const patternCanvas = getHatchPattern(TEST_LINES_HATCH);
 
     this.addTestCanvases(patternCanvas);
   }
@@ -135,7 +135,7 @@ export class AppComponent implements AfterViewInit {
     // ctx4.setLineDash([40, 20]);
     ctx4.fillStyle = ctx4.createPattern(
       patternCanvas,
-      'repeat'
+      'no-repeat'
     ) as CanvasPattern;
     ctx4.beginPath();
     ctx4.moveTo(CANVAS_SIZE.w / 2, CANVAS_SIZE.h / 2);

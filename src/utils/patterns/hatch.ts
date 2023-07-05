@@ -8,38 +8,30 @@ import {
   getLineWidth,
 } from './patterns-model';
 
-const patternCanvasSize = (
-  lineWidth: number,
-  spacing: number,
-  angleRad: number
-) => {
-  const k = 1 / Math.tan(angleRad);
-  const patternHeight = spacing / Math.cos(angleRad) + lineWidth;
-  const patternWidth = patternHeight * k;
-  return [
-    Math.abs(Math.ceil(patternWidth)),
-    Math.abs(Math.ceil(patternHeight)),
-  ];
-};
+function getSize(angle: number, spacing: number, lineWidth: number): CanvasSize {
+  // TODO: care 0 and 90 degrees
+  const defaultWidth = 50;
 
+  // y = kx + b
+  const k = Math.tan(angle);
+  const b = (spacing + lineWidth) / Math.cos(angle);
+
+  const width_X = Math.abs(
+      angle === 0 ? defaultWidth : b / k
+  );
+  const height_Y = b;
+  return { w: Math.round(width_X), h: Math.round(height_Y) };
+}
 function getPatternSize(style: FillStyle): CanvasSize {
   if (style.fill_type_detected === 'lines') {
-    const defaultWidth = 50;
-
-    // y = kx + b
-    const k = Math.tan(style.pattern_angle_rad);
-    const b =
-      (style.pattern_spacing_px + style.width) /
-      Math.cos(style.pattern_angle_rad);
-    const y = (x: number, c: number) => k * x + b * c;
-
-    const width_X = Math.abs(
-      style.pattern_angle_rad === 0 ? defaultWidth : b / k
-    );
-    const height_Y = b;
-    return { w: Math.round(width_X), h: Math.round(height_Y) };
+    return getSize(style.pattern_angle_rad, style.pattern_spacing_px, style.width);
   } else if (style.fill_type_detected === 'cross-lines') {
-    return;
+    const patternSize = getSize(style.pattern_angle_rad, style.pattern_spacing_px, style.width);
+    const crossPatternSize = getSize(style.cross_pattern_angle_rad, style.cross_pattern_spacing_px, style.width);
+    return {
+      w: leastCommonMultiple(patternSize.w, crossPatternSize.w),
+      h: leastCommonMultiple(patternSize.h, crossPatternSize.h)
+    };
   }
 }
 
@@ -58,42 +50,16 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
   };
 
   const size = getPatternSize(style);
-  console.log(size);
 
-  const [minWidth1, minHeight1] = patternCanvasSize(
-    style.width,
-    style.pattern_spacing_px,
-    style.pattern_angle_rad
-  );
-  const [minWidth2, minHeight2] = patternCanvasSize(
-    style.width,
-    style.cross_pattern_spacing_px,
-    style.cross_pattern_angle_rad
-  );
-
-  const patternCanvasWidthA = leastCommonMultiple(3, 5);
-  // const patternCanvasHeightA = leastCommonMultiple(minHeight1, minHeight2);
-  let patternCanvasWidth = size?.w ?? 300;
-  let patternCanvasHeight = size?.h ?? 300;
+  let patternCanvasWidth = size?.w ? Math.min(size.w, CANVAS_SIZE.w) : CANVAS_SIZE.w;
+  let patternCanvasHeight = size?.h ? Math.min(size.h, CANVAS_SIZE.h) : CANVAS_SIZE.h;
+  console.log({ size, patternCanvasWidth, patternCanvasHeight })
 
   const patternCanvas = document.createElement('canvas');
   const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-  const scale = getPatternScale(CANVAS_SIZE, {
-    w: patternCanvasWidth,
-    h: patternCanvasHeight,
-  });
-
-  console.log(scale);
-  // patternCtx.scale(scale.x, scale.y);
-
-  // patternCanvasWidth *= scale.x;
-  // patternCanvasHeight *= scale.y;
   patternCanvas.width = patternCanvasWidth;
   patternCanvas.height = patternCanvasHeight;
-
-  // patternCanvas.width = patternCanvasWidth * scale.x;
-  // patternCanvas.height = patternCanvasHeight * scale.y;
 
   patternCtx.fillStyle = style.color;
   patternCtx.fillRect(0, 0, patternCanvasWidth, patternCanvasHeight);
@@ -117,8 +83,10 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
     });
   }
 
+  patternCtx.strokeStyle = style.pattern_color;
+  patternCtx.lineCap = 'square';
+
   linesData.forEach(({ angle, spacing }) => {
-    patternCtx.strokeStyle = style.pattern_color;
     patternCtx.beginPath();
 
     const isRightAngle = angle === Math.PI / 2 || angle === -Math.PI / 2;
@@ -174,11 +142,12 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
     }
 
     patternCtx.stroke();
-
-    patternCtx.setLineDash([]);
-    patternCtx.lineWidth = 1;
-    patternCtx.strokeRect(0, 0, patternCanvas.width, patternCanvas.height);
   });
+
+  // ADD PATTERN BORDERS
+  // patternCtx.setLineDash([]);
+  // patternCtx.lineWidth = 1;
+  // patternCtx.strokeRect(0, 0, patternCanvas.width, patternCanvas.height);
 
   return patternCanvas;
 }

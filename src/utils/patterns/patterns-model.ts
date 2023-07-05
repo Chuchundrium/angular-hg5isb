@@ -37,10 +37,10 @@ export interface CanvasSize {
 export const TEST_CROSS_HATCH: FillStyle = {
   color: '#E8F6EF',
   pattern_color: '#4C4C6Daa',
-  pattern_style: [7, 3],
+  pattern_style: [],
   pattern_angle_rad: fromDegToRad(60),
   cross_pattern_angle_rad: fromDegToRad(-60),
-  pattern_spacing_px: 20,
+  pattern_spacing_px: 40,
   cross_pattern_spacing_px: 40,
   weight: 0,
 };

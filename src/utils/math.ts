@@ -1,15 +1,14 @@
 export function leastCommonMultiple(a: number, b: number): number {
-  if (a < 0 || b < 0 || Number.isInteger(a) || Number.isInteger(b)) {
+  if (a < 0 || b < 0 || a % 1 !== 0 || b % 1 !== 0) {
     return 0;
   }
-  console.log('leastCommonMultiple...', a, b);
 
   const gcd = greatestCommonDivisor(a, b);
   return (a * b) / gcd;
 }
 
 function greatestCommonDivisor(a: number, b: number) {
-  console.log('greatestCommonDivisor...', a, b);
+  // TODO: add breakValue?: number as Canvas size
   while (a !== b) {
     const d = Math.abs(a - b);
     const min = Math.min(a, b);
