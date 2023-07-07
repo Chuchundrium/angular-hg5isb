@@ -1,5 +1,5 @@
 import { isDefined } from '../general';
-import { leastCommonMultiple, x } from '../math';
+import {isRightAngle, isZeroAngle, leastCommonMultiple, x} from '../math';
 import {
   CanvasSize,
   CANVAS_SIZE,
@@ -9,16 +9,14 @@ import {
 } from './patterns-model';
 
 function getSize(angle: number, spacing: number, lineWidth: number): CanvasSize {
-  // TODO: care 0 and 90 degrees
   const defaultWidth = 50;
+  const defaultHeight = 50;
 
   // y = kx + b
-  const k = Math.tan(angle);
-  const b = (spacing + lineWidth) / Math.cos(angle);
+  const k = isRightAngle(angle) ? 1 : Math.tan(angle);
+  const b = isRightAngle(angle) ? defaultHeight : (spacing + lineWidth) / Math.cos(angle);
 
-  const width_X = Math.abs(
-      angle === 0 ? defaultWidth : b / k
-  );
+  const width_X = isZeroAngle(angle) ? defaultWidth : Math.abs(b / k);
   const height_Y = b;
   return { w: Math.round(width_X), h: Math.round(height_Y) };
 }
@@ -49,20 +47,21 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
     fill_type_detected: detectFillType(style),
   };
 
-  const size = getPatternSize(style);
-
-  let patternCanvasWidth = size?.w ? Math.min(size.w, CANVAS_SIZE.w) : CANVAS_SIZE.w;
-  let patternCanvasHeight = size?.h ? Math.min(size.h, CANVAS_SIZE.h) : CANVAS_SIZE.h;
-  console.log({ size, patternCanvasWidth, patternCanvasHeight })
-
   const patternCanvas = document.createElement('canvas');
   const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-  patternCanvas.width = patternCanvasWidth;
-  patternCanvas.height = patternCanvasHeight;
 
+  const size = getPatternSize(style);
+
+  if (isDefined(size?.w) && isDefined(size?.h) && size.w < CANVAS_SIZE.w && size.h < CANVAS_SIZE.h) {
+    patternCanvas.width = size.w;
+    patternCanvas.height = size.h;
+  } else {
+    patternCanvas.width = CANVAS_SIZE.w;
+    patternCanvas.height = CANVAS_SIZE.h;
+  }
   patternCtx.fillStyle = style.color;
-  patternCtx.fillRect(0, 0, patternCanvasWidth, patternCanvasHeight);
+  patternCtx.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
 
   if (isDefined(style.pattern_style)) {
     patternCtx.setLineDash(style.pattern_style);
@@ -89,27 +88,23 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
   linesData.forEach(({ angle, spacing }) => {
     patternCtx.beginPath();
 
-    const isRightAngle = angle === Math.PI / 2 || angle === -Math.PI / 2;
-    const isZeroAngle = angle === 0;
-    const isNegativeAngle = !isRightAngle && !isZeroAngle && angle < 0;
-
-    if (isRightAngle) {
+    if (isRightAngle(angle)) {
       const dx = Math.abs(Math.ceil(spacing + style.width));
-      const countX = Math.ceil(patternCanvasWidth / dx);
+      const countX = Math.ceil(patternCanvas.width / dx);
       let x = 0;
       const y1 = 0;
-      const y2 = patternCanvasHeight;
+      const y2 = patternCanvas.height;
 
       for (let i = 0; i < countX; i++) {
         patternCtx.moveTo(x, y1);
         patternCtx.lineTo(x, y2);
         x += dx;
       }
-    } else if (isZeroAngle) {
+    } else if (isZeroAngle(angle)) {
       const dy = Math.abs(Math.ceil(spacing + style.width));
-      const countY = Math.ceil(patternCanvasHeight / dy);
+      const countY = Math.ceil(patternCanvas.height / dy);
       const x1 = 0;
-      const x2 = patternCanvasWidth;
+      const x2 = patternCanvas.width;
       let y = 0;
 
       for (let i = 0; i < countY; i++) {
@@ -118,15 +113,17 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
         y += dy;
       }
     } else {
+      const isNegativeAngle = angle < 0;
+
       const k = Math.tan(angle);
       const b = Math.ceil((spacing + style.width) / Math.cos(angle));
       const dx = Math.abs(Math.ceil((spacing + style.width) / Math.sin(angle)));
       const dy = Math.abs(b);
-      const countX = Math.ceil(patternCanvasWidth / dx);
-      const countY = Math.ceil(patternCanvasHeight / dy);
+      const countX = Math.ceil(patternCanvas.width / dx);
+      const countY = Math.ceil(patternCanvas.height / dy);
       const count = countX + countY;
       const y1 = 0;
-      const y2 = patternCanvasHeight;
+      const y2 = patternCanvas.height;
 
       let x1 = isNegativeAngle ? 0 : -1 * dx * countY;
       let x2 = isNegativeAngle

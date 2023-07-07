@@ -8,7 +8,6 @@ export function leastCommonMultiple(a: number, b: number): number {
 }
 
 function greatestCommonDivisor(a: number, b: number) {
-  // TODO: add breakValue?: number as Canvas size
   while (a !== b) {
     const d = Math.abs(a - b);
     const min = Math.min(a, b);
@@ -25,3 +24,6 @@ export function fromDegToRad(angle: number) {
 // y = kx + b
 export const y = (x: number, k: number, b: number) => k * x + b;
 export const x = (y: number, k: number, b: number) => (y - b) / k;
+
+export const isRightAngle = (angle: number) => angle === Math.PI / 2 || angle === -Math.PI / 2;
+export const isZeroAngle = (angle: number) => angle === 0;
