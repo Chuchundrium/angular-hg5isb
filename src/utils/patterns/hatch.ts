@@ -16,9 +16,9 @@ function getSize(angle: number, spacing: number, lineWidth: number): CanvasSize 
   const k = isRightAngle(angle) ? 1 : Math.tan(angle);
   const b = isRightAngle(angle) ? defaultHeight : (spacing + lineWidth) / Math.cos(angle);
 
-  const width_X = isZeroAngle(angle) ? defaultWidth : Math.abs(b / k);
-  const height_Y = b;
-  return { w: Math.round(width_X), h: Math.round(height_Y) };
+  const widthX = isZeroAngle(angle) ? defaultWidth : Math.abs(b / k);
+  const heightY = b;
+  return { w: Math.round(widthX), h: Math.round(heightY) };
 }
 function getPatternSize(style: FillStyle): CanvasSize {
   if (style.fill_type_detected === 'lines') {
