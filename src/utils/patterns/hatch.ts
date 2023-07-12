@@ -16,15 +16,19 @@ function getSize(
   const defaultWidth = 50;
   const defaultHeight = 50;
 
-  // y = kx + b
-  const k = isRightAngle(angle) ? 1 : Math.tan(angle);
-  const b = isRightAngle(angle)
-    ? defaultHeight
-    : (spacing + lineWidth) / Math.cos(angle);
+  if (isRightAngle(angle)) {
+    return { w: spacing + lineWidth, h: defaultHeight };
+  } else if (isZeroAngle(angle)) {
+    return { w: defaultWidth, h: spacing + lineWidth };
+  } else {
+    // y = kx + b
+    const k = Math.tan(angle);
+    const b = (spacing + lineWidth) / Math.cos(angle);
 
-  const widthX = isZeroAngle(angle) ? defaultWidth : Math.abs(b / k);
-  const heightY = b;
-  return { w: Math.round(widthX), h: Math.round(heightY) };
+    const widthX = Math.abs(b / k);
+    const heightY = b;
+    return { w: Math.ceil(widthX), h: Math.ceil(heightY) };
+  }
 }
 function getPatternSize(style: FillStyle): CanvasSize {
   if (style.fill_type_detected === 'lines') {
@@ -113,7 +117,7 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
     if (isRightAngle(angle)) {
       const dx = Math.abs(Math.ceil(spacing + style.width));
       const countX = Math.ceil(patternCanvas.width / dx);
-      let x = 0;
+      let x = style.width / 2;
       const y1 = 0;
       const y2 = patternCanvas.height;
 
@@ -165,6 +169,8 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
 
   // ADD PATTERN BORDERS
   // patternCtx.setLineDash([]);
+  // patternCtx.globalAlpha = 1;
+  // patternCtx.strokeStyle = '#02fa44';
   // patternCtx.lineWidth = 1;
   // patternCtx.strokeRect(0, 0, patternCanvas.width, patternCanvas.height);
 

@@ -11,7 +11,7 @@ import {
 } from './patterns.service';
 import { getHatchPattern } from './utils/patterns/hatch';
 import {
-    CanvasSize,
+  CanvasSize,
   CANVAS_SIZE,
   TEST_CROSS_HATCH,
   TEST_LINES_HATCH,
@@ -52,8 +52,8 @@ export class AppComponent implements AfterViewInit {
     // const patternCanvas = getGravelPattern();
     // const patternCanvas = getHoneycombsPattern();
 
-    const patternCanvas = getHatchPattern(TEST_CROSS_HATCH);
-    // const patternCanvas = getHatchPattern(TEST_LINES_HATCH);
+    // const patternCanvas = getHatchPattern(TEST_CROSS_HATCH);
+    const patternCanvas = getHatchPattern(TEST_LINES_HATCH);
 
     this.addTestCanvases(patternCanvas);
   }
@@ -110,7 +110,7 @@ export class AppComponent implements AfterViewInit {
     // ctx3.lineWidth = 10;
     // ctx3.strokeStyle = '#007f0044';
     // ctx3.setLineDash([40, 20]);
-    
+
     ctx3.fillStyle = ctx3.createPattern(
       patternCanvas,
       'repeat'
