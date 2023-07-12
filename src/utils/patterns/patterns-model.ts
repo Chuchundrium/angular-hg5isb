@@ -39,7 +39,7 @@ export const TEST_CROSS_HATCH: FillStyle = {
   pattern_color: '#4C4C6D',
   pattern_style: [10, 5, 3, 5],
   pattern_angle_rad: fromDegToRad(45),
-  cross_pattern_angle_rad: fromDegToRad(-45),
+  cross_pattern_angle_rad: fromDegToRad(-0),
   pattern_spacing_px: 20,
   cross_pattern_spacing_px: 30,
   weight: 0,
@@ -49,7 +49,7 @@ export const TEST_LINES_HATCH: FillStyle = {
   color: '#E8F6EF',
   pattern_color: '#4C4C6D',
   pattern_style: [1, 0],
-  pattern_angle_rad: fromDegToRad(30),
+  pattern_angle_rad: fromDegToRad(0),
   pattern_spacing_px: 22,
   weight: 3,
 };

@@ -13,22 +13,22 @@ function getSize(
   spacing: number,
   lineWidth: number
 ): CanvasSize {
-  const defaultWidth = 50;
-  const defaultHeight = 50;
+  let width = 50;
+  let height = 50;
 
   if (isRightAngle(angle)) {
-    return { w: spacing + lineWidth, h: defaultHeight };
-  } else if (isZeroAngle(angle)) {
-    return { w: defaultWidth, h: spacing + lineWidth };
+    width = spacing + lineWidth;
+  } else if (angle === 0) {
+    height = spacing + lineWidth;
   } else {
-    // y = kx + b
+    // Calc width and height according to straight line equation y = kx + b
     const k = Math.tan(angle);
     const b = (spacing + lineWidth) / Math.cos(angle);
 
-    const widthX = Math.abs(b / k);
-    const heightY = b;
-    return { w: Math.ceil(widthX), h: Math.ceil(heightY) };
+    width = Math.abs(b / k);
+    height = b;
   }
+  return { w: Math.ceil(width), h: Math.ceil(height) };
 }
 function getPatternSize(style: FillStyle): CanvasSize {
   if (style.fill_type_detected === 'lines') {
