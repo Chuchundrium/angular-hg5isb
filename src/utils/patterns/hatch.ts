@@ -117,7 +117,8 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
     if (isRightAngle(angle)) {
       const dx = Math.abs(Math.ceil(spacing + style.width));
       const countX = Math.ceil(patternCanvas.width / dx);
-      let x = style.width / 2;
+      const fix = style.width / 2;
+      let x = 0 + fix;
       const y1 = 0;
       const y2 = patternCanvas.height;
 
@@ -131,7 +132,8 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
       const countY = Math.ceil(patternCanvas.height / dy);
       const x1 = 0;
       const x2 = patternCanvas.width;
-      let y = 0;
+      const fix = style.width / 2;
+      let y = 0 + fix;
 
       for (let i = 0; i < countY; i++) {
         patternCtx.moveTo(x1, y);

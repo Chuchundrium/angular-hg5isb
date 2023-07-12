@@ -52,8 +52,8 @@ export class AppComponent implements AfterViewInit {
     // const patternCanvas = getGravelPattern();
     // const patternCanvas = getHoneycombsPattern();
 
-    const patternCanvas = getHatchPattern(TEST_CROSS_HATCH);
-    // const patternCanvas = getHatchPattern(TEST_LINES_HATCH);
+    // const patternCanvas = getHatchPattern(TEST_CROSS_HATCH);
+    const patternCanvas = getHatchPattern(TEST_LINES_HATCH);
 
     this.addTestCanvases(patternCanvas);
   }
