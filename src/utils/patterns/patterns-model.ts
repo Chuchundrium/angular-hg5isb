@@ -50,9 +50,9 @@ export const TEST_LINES_HATCH: FillStyle = {
   color: '#E8F6EF',
   pattern_color: '#4C4C6D',
   pattern_style: [1, 0],
-  pattern_angle_rad: fromDegToRad(-20),
-  pattern_spacing_px: 22,
-  weight: 3,
+  pattern_angle_rad: fromDegToRad(-45),
+  pattern_spacing_px: 20,
+  weight: 2,
 };
 
 /**
@@ -108,6 +108,6 @@ export const detectFillType = (
 };
 
 export const CANVAS_SIZE: CanvasSize = {
-  w: 455,
-  h: 455,
+  w: 400,
+  h: 400,
 };

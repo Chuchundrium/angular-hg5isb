@@ -28,7 +28,8 @@ function getSize(
     width = Math.abs(b / k);
     height = b;
   }
-  return { w: Math.ceil(width), h: Math.ceil(height) };
+  // Should return rounded values to use them in leastCommonMultiple calc
+  return { w: Math.round(width), h: Math.round(height) };
 }
 function getPatternSize(style: FillStyle): CanvasSize {
   if (style.fill_type_detected === 'lines') {
@@ -56,10 +57,17 @@ function getPatternSize(style: FillStyle): CanvasSize {
 }
 
 function getPatternScale(canvasSize: CanvasSize, patternSize: CanvasSize) {
-  return {
-    x: canvasSize.w / patternSize.w / Math.round(canvasSize.w / patternSize.w),
-    y: canvasSize.h / patternSize.h / Math.round(canvasSize.h / patternSize.h),
-  };
+  const xFullCount = Math.floor(canvasSize.w / patternSize.w);
+  const yFullCount = Math.floor(canvasSize.h / patternSize.h);
+
+  const updPatternWidth = canvasSize.w / xFullCount;
+  const updPatternHeight = canvasSize.h / yFullCount;
+
+  // return {
+  //   x: updPatternWidth / patternSize.w,
+  //   y: updPatternHeight / patternSize.h,
+  // };
+  return { x: 1, y: 1 };
 }
 
 export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
@@ -72,16 +80,27 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
   const patternCanvas = document.createElement('canvas');
   const patternCtx = patternCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-  const size = getPatternSize(style);
+  const patternCanvasSize = getPatternSize(style);
+  console.log({ patternCanvasSize });
+  const scale = getPatternScale(CANVAS_SIZE, {
+    w: patternCanvasSize.w,
+    h: patternCanvasSize.h,
+  });
 
+  console.log(patternCanvasSize.h, scale.y);
+  // ?? add scaled size to check ??
   if (
-    isDefined(size?.w) &&
-    isDefined(size?.h) &&
-    size.w < CANVAS_SIZE.w &&
-    size.h < CANVAS_SIZE.h
+    isDefined(patternCanvasSize?.w) &&
+    isDefined(patternCanvasSize?.h) &&
+    patternCanvasSize.w < CANVAS_SIZE.w &&
+    patternCanvasSize.h < CANVAS_SIZE.h
   ) {
-    patternCanvas.width = size.w;
-    patternCanvas.height = size.h;
+    // Add Math.ceil / round/ floor
+    // SCALE CANVAS
+    // patternCanvas.width = patternCanvasSize.w * scale.x;
+    // patternCanvas.height = patternCanvasSize.h * scale.y;
+    patternCanvas.width = patternCanvasSize.w;
+    patternCanvas.height = patternCanvasSize.h;
   } else {
     patternCanvas.width = CANVAS_SIZE.w;
     patternCanvas.height = CANVAS_SIZE.h;
@@ -147,16 +166,19 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
       const b = Math.ceil((spacing + style.width) / Math.cos(angle));
       const dx = Math.abs(Math.ceil((spacing + style.width) / Math.sin(angle)));
       const dy = Math.abs(b);
-      const countX = Math.ceil(patternCanvas.width / dx);
-      const countY = Math.ceil(patternCanvas.height / dy);
+      const countX = Math.ceil(patternCanvasSize.w / dx);
+      const countY = Math.ceil(patternCanvasSize.h / dy);
       const count = countX + countY;
       const y1 = 0;
-      const y2 = patternCanvas.height;
+      const y2 = patternCanvasSize.h;
 
       let x1 = isNegativeAngle ? 0 : -1 * dx * countY;
       let x2 = isNegativeAngle
         ? Math.ceil(x(y2, k, b)) - dx
         : dx + x1 + Math.ceil(x(y2, k, b));
+
+      // SCALE CONTEXT
+      // patternCtx.scale(scale.x, scale.y);
 
       for (let i = 0; i <= count; i++) {
         patternCtx.moveTo(x1, y1);
@@ -165,8 +187,8 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
         x2 += dx;
       }
     }
-
     patternCtx.stroke();
+    // patternCtx.transform(1, 0, 0, 1, 0, 0);
   });
 
   // ADD PATTERN BORDERS
