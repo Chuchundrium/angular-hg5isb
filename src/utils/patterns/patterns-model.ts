@@ -50,9 +50,9 @@ export const TEST_LINES_HATCH: FillStyle = {
   color: '#E8F6EF',
   pattern_color: '#4C4C6D',
   pattern_style: [1, 0],
-  pattern_angle_rad: fromDegToRad(-45),
-  pattern_spacing_px: 20,
-  weight: 2,
+  pattern_angle_rad: fromDegToRad(45),
+  pattern_spacing_px: 30,
+  weight: 0,
 };
 
 /**
