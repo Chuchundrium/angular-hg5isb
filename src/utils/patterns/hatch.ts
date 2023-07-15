@@ -132,11 +132,13 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
   linesData.forEach(({ angle, spacing }) => {
     patternCtx.beginPath();
 
+    // SCALE CONTEXT
+    patternCtx.scale(scale.x, scale.y);
+
     if (isRightAngle(angle)) {
       const dx = Math.abs(Math.ceil(spacing + style.width));
       const countX = Math.ceil(patternCanvas.width / dx);
-      const fix = style.width / 2;
-      let x = 0 + fix;
+      let x = style.width / 2;
       const y1 = 0;
       const y2 = patternCanvas.height;
 
@@ -150,8 +152,7 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
       const countY = Math.ceil(patternCanvas.height / dy);
       const x1 = 0;
       const x2 = patternCanvas.width;
-      const fix = style.width / 2;
-      let y = 0 + fix;
+      let y = style.width / 2;
 
       for (let i = 0; i < countY; i++) {
         patternCtx.moveTo(x1, y);
@@ -164,12 +165,6 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
       const k = Math.tan(angle);
       const b = Math.ceil(Math.abs((spacing + style.width) / Math.cos(angle)));
       const dx = Math.ceil(Math.abs((spacing + style.width) / Math.sin(angle)));
-      console.log({
-        sin: Math.sin(angle),
-        cos: Math.cos(angle),
-        divSin: (spacing + style.width) / Math.sin(angle),
-        divCos: (spacing + style.width) / Math.cos(angle),
-      });
       const dy = Math.abs(b);
       const countX = Math.ceil(patternCanvasSize.w / dx);
       const countY = Math.ceil(patternCanvasSize.h / dy);
@@ -182,9 +177,6 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
         ? Math.ceil(x(y2, k, b)) - dx
         : dx + x1 + Math.ceil(x(y2, k, b));
 
-      // SCALE CONTEXT
-      patternCtx.scale(scale.x, scale.y);
-
       console.log({ dx, dy });
       for (let i = 0; i <= count; i++) {
         patternCtx.moveTo(x1, y1);
@@ -194,8 +186,8 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
       }
     }
     patternCtx.stroke();
-    // patternCtx.transform(1, 0, 0, 1, 0, 0);
   });
+  patternCtx.transform(1, 0, 0, 1, 0, 0);
 
   // ADD PATTERN BORDERS
   // patternCtx.setLineDash([]);
