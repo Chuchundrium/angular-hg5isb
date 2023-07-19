@@ -144,7 +144,7 @@ export class AppComponent implements AfterViewInit {
     // ctx4.setLineDash([40, 20]);
     ctx4.fillStyle = ctx4.createPattern(
       patternCanvas,
-      'repeat'
+      'no-repeat'
     ) as CanvasPattern;
     ctx4.beginPath();
     ctx4.moveTo(CANVAS_SIZE.w / 2, CANVAS_SIZE.h / 2);
