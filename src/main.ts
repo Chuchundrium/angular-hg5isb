@@ -79,6 +79,9 @@ export class AppComponent implements AfterViewInit {
     ) as CanvasPattern;
     ctx1.fill();
     // ctx1.stroke();
+    ctx1.lineWidth = 2;
+    ctx1.strokeStyle = '#1D267D';
+    ctx1.strokeRect(0, 0, canvas1.width, canvas1.height);
     ctx1.restore();
 
     const canvas2 = this.canvas2.nativeElement;
@@ -101,6 +104,9 @@ export class AppComponent implements AfterViewInit {
     ctx2.fill();
 
     // ctx2.stroke();
+    ctx2.lineWidth = 2;
+    ctx2.strokeStyle = '#1D267D';
+    ctx2.strokeRect(0, 0, canvas2.width, canvas2.height);
     ctx2.restore();
 
     const canvas3 = this.canvas3.nativeElement;
@@ -124,6 +130,9 @@ export class AppComponent implements AfterViewInit {
     ctx3.fill();
 
     // ctx3.stroke();
+    ctx3.lineWidth = 2;
+    ctx3.strokeStyle = '#1D267D';
+    ctx3.strokeRect(0, 0, canvas3.width, canvas3.height);
     ctx3.restore();
 
     const canvas4 = this.canvas4.nativeElement;
@@ -135,7 +144,7 @@ export class AppComponent implements AfterViewInit {
     // ctx4.setLineDash([40, 20]);
     ctx4.fillStyle = ctx4.createPattern(
       patternCanvas,
-      'no-repeat'
+      'repeat'
     ) as CanvasPattern;
     ctx4.beginPath();
     ctx4.moveTo(CANVAS_SIZE.w / 2, CANVAS_SIZE.h / 2);
@@ -146,6 +155,9 @@ export class AppComponent implements AfterViewInit {
     ctx4.fill();
 
     // ctx4.stroke();
+    ctx4.lineWidth = 2;
+    ctx4.strokeStyle = '#1D267D';
+    ctx4.strokeRect(0, 0, canvas4.width, canvas4.height);
     ctx4.restore();
   }
 }

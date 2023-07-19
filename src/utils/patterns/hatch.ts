@@ -64,10 +64,12 @@ function getPatternScale(canvasSize: CanvasSize, patternSize: CanvasSize) {
   const updPatternWidth = canvasSize.w / xWholeNumber;
   const updPatternHeight = canvasSize.h / yWholeNumber;
 
-  return {
-    x: updPatternWidth / patternSize.w,
-    y: updPatternHeight / patternSize.h,
-  };
+  // return {
+  //   x: updPatternWidth / patternSize.w,
+  //   y: updPatternHeight / patternSize.h,
+  // };
+
+  return { x: 1, y: 1 }
 }
 
 export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
@@ -97,7 +99,7 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
   const withScaling = isValidPatternSize && isSolidLine(style.pattern_style);
   if (isValidPatternSize && isSolidLine(style.pattern_style)) {
     // SCALE PATTERN CANVAS SIZE
-    console.log('scale size...');
+    console.log('scale size...', { ...scale }, { widthBeforeScale: patternCanvasSize.w, widthAfterScale: patternCanvasSize.w * scale.x, heightBeforeScale: patternCanvasSize.h, heightAfterScale: patternCanvasSize.h * scale.y });
     patternCanvas.width = patternCanvasSize.w * scale.x;
     patternCanvas.height = patternCanvasSize.h * scale.y;
   } else {
