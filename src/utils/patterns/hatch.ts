@@ -1,5 +1,11 @@
 import { isDefined } from '../general';
-import { isRightAngle, isZeroAngle, leastCommonMultiple, x } from '../math';
+import {
+  isRightAngle,
+  isZeroAngle,
+  leastCommonMultiple,
+  roundToAbsLarger,
+  x,
+} from '../math';
 import {
   CanvasSize,
   CANVAS_SIZE,
@@ -27,7 +33,7 @@ function getSize(
     const b = (spacing + lineWidth) / Math.cos(angle);
 
     width = Math.abs(b / k);
-    height = b;
+    height = Math.abs(b);
   }
   return { w: Math.ceil(width), h: Math.ceil(height) };
 }
@@ -69,7 +75,7 @@ function getPatternScale(canvasSize: CanvasSize, patternSize: CanvasSize) {
     y: updPatternHeight / patternSize.h,
   };
 
-  return { x: 1, y: 1 }
+  return { x: 1, y: 1 };
 }
 
 export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
@@ -99,7 +105,6 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
   const withScaling = isValidPatternSize;
   if (isValidPatternSize) {
     // SCALE PATTERN CANVAS SIZE
-    console.log('scale size...', { ...scale }, { widthBeforeScale: patternCanvasSize.w, widthAfterScale: patternCanvasSize.w * scale.x, heightBeforeScale: patternCanvasSize.h, heightAfterScale: patternCanvasSize.h * scale.y });
     patternCanvas.width = patternCanvasSize.w * scale.x;
     patternCanvas.height = patternCanvasSize.h * scale.y;
   } else {
@@ -131,11 +136,9 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
   }
 
   patternCtx.strokeStyle = style.pattern_color;
-  patternCtx.lineCap = 'square';
 
   if (isValidPatternSize && isSolidLine(style.pattern_style)) {
     // SCALE CONTEXT
-    console.log('scale content...');
     patternCtx.scale(scale.x, scale.y);
   }
 
@@ -174,27 +177,43 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
       const isNegativeAngle = angle < 0;
 
       const k = Math.tan(angle);
-      const b = Math.ceil((spacing + style.width) / Math.cos(angle));
+      const b = (spacing + style.width) / Math.cos(angle);
       const dx = Math.ceil(Math.abs((spacing + style.width) / Math.sin(angle)));
-      const dy = Math.abs(b);
+      const dy = Math.ceil(Math.abs(b));
+
+      // if with scaling: use calculated size for calc, scaling will work according to context scaling
+      // if without: use resulted pattern size for calc
       const countX = Math.ceil(
         (withScaling ? patternCanvasSize.w : patternCanvas.width) / dx
       );
       const countY = Math.ceil(
         (withScaling ? patternCanvasSize.h : patternCanvas.height) / dy
       );
-      const count = countX + countY;
-      const y1 = 0;
-      const y2 = withScaling ? patternCanvasSize.w : patternCanvas.width;
+      const count = countX + countY + 1;
 
-      let x1 = isNegativeAngle ? 0 : -1 * dx * countY;
+      const y1 = -dy;
+      const y2 = roundToAbsLarger(
+        (withScaling ? patternCanvasSize.w : patternCanvas.width) + dy
+      );
+
+      // think about more clever shift
+      // const y1 = -2 * dy;
+      // const y2 =
+      //   (withScaling ? patternCanvasSize.w : patternCanvas.width) + 2 * dy;
+
+      const x1Base = x(y1, k, b);
+      const x2Base = x(y2, k, b);
+      let x1 = isNegativeAngle
+        ? roundToAbsLarger(x1Base - dx)
+        : roundToAbsLarger(x1Base - dx * countY);
       let x2 = isNegativeAngle
-        ? Math.ceil(x(y2, k, b)) - dx
-        : dx + x1 + Math.ceil(x(y2, k, b));
+        ? roundToAbsLarger(x2Base - dx)
+        : roundToAbsLarger(x2Base - dx * countY);
 
       for (let i = 0; i <= count; i++) {
         patternCtx.moveTo(x1, y1);
         patternCtx.lineTo(x2, y2);
+
         x1 += dx;
         x2 += dx;
       }

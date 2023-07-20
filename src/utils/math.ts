@@ -25,5 +25,9 @@ export function fromDegToRad(angle: number) {
 export const y = (x: number, k: number, b: number) => k * x + b;
 export const x = (y: number, k: number, b: number) => (y - b) / k;
 
-export const isRightAngle = (angle: number) => angle === Math.PI / 2 || angle === -Math.PI / 2;
+export const isRightAngle = (angle: number) =>
+  angle === Math.PI / 2 || angle === -Math.PI / 2;
 export const isZeroAngle = (angle: number) => angle === 0;
+
+export const roundToAbsLarger = (value: number) =>
+  value > 0 ? Math.ceil(value) : Math.floor(value);
