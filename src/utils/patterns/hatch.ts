@@ -114,7 +114,6 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
   patternCtx.fillStyle = style.color;
   patternCtx.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
 
-  // TODO
   if (isDefined(style.pattern_style)) {
     patternCtx.setLineDash(style.pattern_style);
   }
@@ -191,15 +190,9 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
       );
       const count = countX + countY + 1;
 
-      const y1 = -dy;
-      const y2 = roundToAbsLarger(
-        (withScaling ? patternCanvasSize.w : patternCanvas.width) + dy
-      );
-
       // think about more clever shift
-      // const y1 = -2 * dy;
-      // const y2 =
-      //   (withScaling ? patternCanvasSize.w : patternCanvas.width) + 2 * dy;
+      const y1 = -dy;
+      const y2 = (withScaling ? patternCanvasSize.w : patternCanvas.width) + dy;
 
       const x1Base = x(y1, k, b);
       const x2Base = x(y2, k, b);
