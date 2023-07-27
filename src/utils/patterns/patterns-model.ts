@@ -1,6 +1,12 @@
 import { fromDegToRad } from '../math';
 import { isDefined } from '../general';
 
+export const FLAGS = {
+  useHatch: true,
+  scaleHatch: true,
+  scaleDashedHatch: true,
+};
+
 export const DEFAULT_LINE_WIDTH_PX = 2;
 
 export const getLineWidth = (weight: number) =>
@@ -49,11 +55,11 @@ export const TEST_CROSS_HATCH: FillStyle = {
 export const TEST_LINES_HATCH: FillStyle = {
   color: '#E8F6EF',
   pattern_color: '#4C4C6D',
-  // pattern_style: [10, 7, 6, 10],
+  // pattern_style: [10, 6],
   pattern_style: [1, 0],
-  pattern_angle_rad: fromDegToRad(-45),
-  pattern_spacing_px: 22, // vs 21
-  weight: 3,
+  pattern_angle_rad: fromDegToRad(45),
+  pattern_spacing_px: 22,
+  weight: 2,
 };
 
 /**
