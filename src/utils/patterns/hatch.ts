@@ -111,7 +111,7 @@ export function getHatchPattern(style: FillStyle): HTMLCanvasElement {
 
   if (
     !isValidPatternSize(calculatedPatternSize, CANVAS_SIZE) ||
-    (isSolidLine(style.pattern_style) && !FLAGS.scaleDashedHatch)
+    (!isSolidLine(style.pattern_style) && !FLAGS.scaleDashedHatch)
   ) {
     // set pattern size equal to tile canvas size: a) if calculated pattern size is larger than canvas size; b) if no need to scale dashed hatch
     patternCanvas.width = CANVAS_SIZE.w;
